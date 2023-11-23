@@ -27,7 +27,7 @@ jobs:
         run: docker build --platform linux/amd64 -t dnanexus_symlink_internal:${{ github.ref_name }} -f Dockerfile .
 
       - name: Configure AWS Credentials
-        uses: actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: us-east-1
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
