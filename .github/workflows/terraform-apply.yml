@@ -6,9 +6,9 @@ on:
       - main
 
 env:
-  TF_CLOUD_ORGANIZATION: "YOUR-ORGANIZATION-HERE"
+  TF_CLOUD_ORGANIZATION: "walts_terraform_organization"
   TF_API_TOKEN: "${{ secrets.TF_API_TOKEN }}"
-  TF_WORKSPACE: "learn-terraform-github-actions"
+  TF_WORKSPACE: "dnanexus_symlink_internal"
   CONFIG_DIRECTORY: "./"
 
 jobs:
@@ -21,6 +21,25 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: actions/configure-aws-credentials@v1
+        with:
+          aws-region: us-east-1
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: actions/amazon-ecr-login@v1
+      - name: Release to ECR
+        run: |
+          docker tag dnanexus_symlink_internal:${{ github.ref_name }} 230407893272.dkr.ecr.us-east-1.amazonaws.com/dnanexus_symlink_internal:${{ github.ref_name }}
+          docker push 230407893272.dkr.ecr.us-east-1.amazonaws.com/dnanexus_symlink_internal:${{ github.ref_name }}
+          docker tag dnanexus_symlink_internal:${{ github.ref_name }} 230407893272.dkr.ecr.us-east-1.amazonaws.com/dnanexus_symlink_internal:latest
+          docker push 230407893272.dkr.ecr.us-east-1.amazonaws.com/dnanexus_symlink_internal:latest
+
+      - name: Build Dockerfile for symlink lambda container
+        run: docker build --platform linux/amd64 -t dnanexus_symlink_internal:${{ github.ref_name }} -f Dockerfile .
 
       - name: Upload Configuration
         uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.0.0

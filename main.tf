@@ -1,74 +1,97 @@
 # Copyright (c) HashiCorp, Inc.
 # SPDX-License-Identifier: MPL-2.0
 
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "4.52.0"
-    }
-    random = {
-      source  = "hashicorp/random"
-      version = "3.4.3"
-    }
-  }
-  required_version = ">= 1.1.0"
-}
 
 provider "aws" {
-  region = "us-west-2"
-}
+  region = var.aws_region
 
-resource "random_pet" "sg" {}
-
-data "aws_ami" "ubuntu" {
-  most_recent = true
-
-  filter {
-    name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+  default_tags {
+    tags = {
+      hashicorp-learn = "lambda-api-gateway"
+    }
   }
 
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-
-  owners = ["099720109477"] # Canonical
 }
 
-resource "aws_instance" "web" {
-  ami                    = data.aws_ami.ubuntu.id
-  instance_type          = "t2.micro"
-  vpc_security_group_ids = [aws_security_group.web-sg.id]
-
-  user_data = <<-EOF
-              #!/bin/bash
-              apt-get update
-              apt-get install -y apache2
-              sed -i -e 's/80/8080/' /etc/apache2/ports.conf
-              echo "Hello World" > /var/www/html/index.html
-              systemctl restart apache2
-              EOF
+resource "random_pet" "lambda_bucket_name" {
+  prefix = "learn-terraform-functions"
+  length = 4
 }
 
-resource "aws_security_group" "web-sg" {
-  name = "${random_pet.sg.id}-sg"
-  ingress {
-    from_port   = 8080
-    to_port     = 8080
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-  // connectivity to ubuntu mirrors is required to run `apt-get update` and `apt-get install apache2`
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+resource "aws_s3_bucket" "lambda_bucket" {
+  bucket = random_pet.lambda_bucket_name.id
+}
+
+resource "aws_s3_bucket_ownership_controls" "lambda_bucket" {
+  bucket = aws_s3_bucket.lambda_bucket.id
+  rule {
+    object_ownership = "BucketOwnerPreferred"
   }
 }
 
-output "web-address" {
-  value = "${aws_instance.web.public_dns}:8080"
+resource "aws_s3_bucket_acl" "lambda_bucket" {
+  depends_on = [aws_s3_bucket_ownership_controls.lambda_bucket]
+
+  bucket = aws_s3_bucket.lambda_bucket.id
+  acl    = "private"
 }
+
+
+data "archive_file" "lambda_dx_symlink_internal" {
+  type = "zip"
+
+  source_dir  = "${path.module}/dnanexus_symlink_internal"
+  output_path = "${path.module}/dx_symlink_internal.zip"
+}
+
+resource "aws_s3_object" "lambda_dx_symlink_internal" {
+  bucket = aws_s3_bucket.lambda_bucket.id
+
+  key    = "dx_symlink_internal_lambda.zip"
+  source = data.archive_file.lambda_dx_symlink_internal.output_path
+
+  etag = filemd5(data.archive_file.lambda_dx_symlink_internal.output_path)
+}
+
+resource "aws_lambda_function" "dx_symlink_internal_lambda" {
+  function_name = "DxSymlinkInternal"
+
+  s3_bucket = aws_s3_bucket.lambda_bucket.id
+  s3_key    = aws_s3_object.lambda_dx_symlink_internal.key
+
+  runtime = "python3.9"
+  handler = "dx_symlink_internal_lambda.lambda_handler"
+
+  source_code_hash = data.archive_file.lambda_dx_symlink_internal.output_base64sha256
+
+  role = aws_iam_role.lambda_exec.arn
+}
+
+resource "aws_cloudwatch_log_group" "dx_symlink_internal" {
+  name = "/aws/lambda/${aws_lambda_function.dx_symlink_internal_lambda.function_name}"
+
+  retention_in_days = 30
+}
+
+resource "aws_iam_role" "lambda_exec" {
+  name = "serverless_lambda"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
+      Sid    = ""
+      Principal = {
+        Service = "lambda.amazonaws.com"
+      }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_policy" {
+  role       = aws_iam_role.lambda_exec.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
