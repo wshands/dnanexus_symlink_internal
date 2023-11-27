@@ -13,4 +13,5 @@ RUN pip install -r requirements.txt
 COPY dnanexus_symlink_internal/dx_symlink_internal_lambda.py ${LAMBDA_TASK_ROOT}
 
 # Set the CMD to your handler (could also be done as a parameter override outside of the Dockerfile)
-CMD [ "lambda_function.lambda_handler" ]
+# <handler file name>.<handler function name>
+CMD [ "dx_symlink_internal_lambda.lambda_handler" ]
