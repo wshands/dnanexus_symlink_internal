@@ -6,7 +6,7 @@ from botocore.exceptions import ClientError
 
 def get_secret():
 
-    secret_name = "migration dependencies contributor token"
+    secret_name = "migration_dependencies_contributor_token"
     region_name = "us-east-1"
 
     # Create a Secrets Manager client
