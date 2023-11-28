@@ -103,24 +103,23 @@ data "aws_secretsmanager_secret" "migration_dependencies_contributor_token" {
 }
 
 resource "aws_secretsmanager_secret_policy" "secrets_policy" {
-  secret_arn = aws_secretsmanager_secret.example.arn
+  secret_arn = data.aws_secretsmanager_secret.migration_dependencies_contributor_token.arn
 
-  policy = <<POLICY
-{
-  "Version": "2012-10-17",
-  "Statement": [
-      {
-        Sid: "EnableAnotherAWSAccountToReadTheSecret"
-        Effect: "Allow"
-        Principal: {
-          Service = "lambda.amazonaws.com"
-        },
-        Action: "secretsmanager:GetSecretValue"
-        Resource: "*"
-      }
-  ]
-}
-POLICY
+  policy = jsonencode(
+  {
+    Version: "2012-10-17",
+    Statement: [
+        {
+          Sid: "EnableAnotherAWSAccountToReadTheSecret"
+          Effect: "Allow"
+          Principal: {
+            Service = "lambda.amazonaws.com"
+          }
+          Action: "secretsmanager:GetSecretValue"
+          Resource: "*"
+        }
+    ]
+  })
 }
 
 
