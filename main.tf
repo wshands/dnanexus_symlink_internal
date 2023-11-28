@@ -120,6 +120,16 @@ resource "aws_iam_role_policy" "sm_policy" {
         Effect   = "Allow"
         Resource = "*"
       },
+      {   
+          # Allow the Lambda to manipulate S3 buckets and objects
+          # TODO limit this to only what the Lambda needs to do
+          # https://stackoverflow.com/questions/57145353/how-to-grant-lambda-permission-to-upload-file-to-s3-bucket-in-terraform
+          "Effect": "Allow",
+          "Action": [
+              "s3:*"
+          ],
+          "Resource": "arn:aws:s3:::*"
+      }
     ]
   })
 }
