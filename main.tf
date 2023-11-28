@@ -13,6 +13,7 @@ provider "aws" {
 
 }
 
+/*
 resource "random_pet" "lambda_bucket_name" {
   prefix = "learn-terraform-functions"
   length = 4
@@ -52,15 +53,10 @@ resource "aws_s3_object" "lambda_dx_symlink_internal" {
 
   etag = filemd5(data.archive_file.lambda_dx_symlink_internal.output_path)
 }
+*/
 
 resource "aws_lambda_function" "dx_symlink_internal_lambda" {
   function_name = "DxSymlinkInternal"
-  #s3_bucket = aws_s3_bucket.lambda_bucket.id
-  #s3_key    = aws_s3_object.lambda_dx_symlink_internal.key
-  #runtime = "python3.9"
-  #handler = "dx_symlink_internal_lambda.lambda_handler"
-  #source_code_hash = data.archive_file.lambda_dx_symlink_internal.output_base64sha256
-
   image_uri     = "230407893272.dkr.ecr.us-east-1.amazonaws.com/dnanexus_symlink_internal:main"
   package_type  = "Image"
 
@@ -69,7 +65,6 @@ resource "aws_lambda_function" "dx_symlink_internal_lambda" {
 
 resource "aws_cloudwatch_log_group" "dx_symlink_internal" {
   name = "/aws/lambda/${aws_lambda_function.dx_symlink_internal_lambda.function_name}"
-
   retention_in_days = 30
 }
 
@@ -98,6 +93,8 @@ resource "aws_iam_role_policy_attachment" "lambda_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/secretsmanager_secret
+# https://developer.hashicorp.com/terraform/language/data-sources
 data "aws_secretsmanager_secret" "migration_dependencies_contributor_token" {
   name = "migration_dependencies_contributor_token"
 }
