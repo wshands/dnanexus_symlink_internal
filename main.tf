@@ -1,59 +1,14 @@
-# Copyright (c) HashiCorp, Inc.
-# SPDX-License-Identifier: MPL-2.0
-
 
 provider "aws" {
   region = var.aws_region
 
   default_tags {
     tags = {
-      hashicorp-learn = "lambda-api-gateway"
+      Biogen = "symlink-s3-files-in-DNAnexus"
     }
   }
 
 }
-
-/*
-resource "random_pet" "lambda_bucket_name" {
-  prefix = "learn-terraform-functions"
-  length = 4
-}
-
-resource "aws_s3_bucket" "lambda_bucket" {
-  bucket = random_pet.lambda_bucket_name.id
-}
-
-resource "aws_s3_bucket_ownership_controls" "lambda_bucket" {
-  bucket = aws_s3_bucket.lambda_bucket.id
-  rule {
-    object_ownership = "BucketOwnerPreferred"
-  }
-}
-
-resource "aws_s3_bucket_acl" "lambda_bucket" {
-  depends_on = [aws_s3_bucket_ownership_controls.lambda_bucket]
-
-  bucket = aws_s3_bucket.lambda_bucket.id
-  acl    = "private"
-}
-
-
-data "archive_file" "lambda_dx_symlink_internal" {
-  type = "zip"
-
-  source_dir  = "${path.module}/dnanexus_symlink_internal"
-  output_path = "${path.module}/dx_symlink_internal.zip"
-}
-
-resource "aws_s3_object" "lambda_dx_symlink_internal" {
-  bucket = aws_s3_bucket.lambda_bucket.id
-
-  key    = "dx_symlink_internal_lambda.zip"
-  source = data.archive_file.lambda_dx_symlink_internal.output_path
-
-  etag = filemd5(data.archive_file.lambda_dx_symlink_internal.output_path)
-}
-*/
 
 resource "aws_lambda_function" "dx_symlink_internal_lambda" {
   function_name = "DxSymlinkInternal"
@@ -86,8 +41,6 @@ resource "aws_iam_role" "lambda_exec" {
   })
 }
 
-
-
 resource "aws_iam_role_policy_attachment" "lambda_policy" {
   role       = aws_iam_role.lambda_exec.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
@@ -115,11 +68,12 @@ resource "aws_iam_role_policy" "sm_policy" {
           "secretsmanager:GetSecretValue",
         ]
         Effect   = "Allow"
+        # TODO limit this to our particular secret resource?
         Resource = "*"
       },
       {   
           # Allow the Lambda to manipulate S3 buckets and objects
-          # TODO limit this to only what the Lambda needs to do
+          # TODO limit this to only what the Lambda needs to do on a specific bucket?
           # https://stackoverflow.com/questions/57145353/how-to-grant-lambda-permission-to-upload-file-to-s3-bucket-in-terraform
           "Effect": "Allow",
           "Action": [
@@ -130,29 +84,6 @@ resource "aws_iam_role_policy" "sm_policy" {
     ]
   })
 }
-
-
-/*
-resource "aws_secretsmanager_secret_policy" "secrets_policy" {
-  secret_arn = data.aws_secretsmanager_secret.migration_dependencies_contributor_token.arn
-
-  policy = jsonencode(
-  {
-    Version: "2012-10-17",
-    Statement: [
-        {
-          Sid: "EnableAnotherAWSAccountToReadTheSecret"
-          Effect: "Allow"
-          Principal: {
-            Service = "lambda.amazonaws.com"
-          }
-          Action: "secretsmanager:GetSecretValue"
-          Resource: "*"
-        }
-    ]
-  })
-}
-*/
 
 # Add Lambda trigger from S3 bucket
 # A file added to the proper bucket will trigger the Lambda
