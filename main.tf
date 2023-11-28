@@ -86,24 +86,49 @@ resource "aws_iam_role" "lambda_exec" {
         Principal = {
           Service = "lambda.amazonaws.com"
         }
-      },
-      {
-        Sid: "EnableAnotherAWSAccountToReadTheSecret"
-        Effect: "Allow"
-        Principal: {
-          Service = "lambda.amazonaws.com"
-        },
-        Action: "secretsmanager:GetSecretValue"
-        Resource: "*"
       }
     ]
   })
 }
 
+
+
 resource "aws_iam_role_policy_attachment" "lambda_policy" {
   role       = aws_iam_role.lambda_exec.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
+
+data "aws_secretsmanager_secret" "migration_dependencies_contributor_token" {
+  name = "migration_dependencies_contributor_token"
+}
+
+resource "aws_secretsmanager_secret_policy" "secrets_policy" {
+  secret_arn = data.aws_secretsmanager_secret.migration_dependencies_contributor_token.arn
+
+  policy = jsonencode(
+  {
+    Version: "2012-10-17",
+    Statement: [
+        {
+          Sid: "EnableAnotherAWSAccountToReadTheSecret"
+          Effect: "Allow"
+          Principal: {
+            Service = "lambda.amazonaws.com"
+          }
+          Action: "secretsmanager:GetSecretValue"
+          Resource: "*"
+        }
+    ]
+  })
+}
+
+
+resource "aws_iam_role_policy_attachment" "lambda_secrets_policy" {
+  role       = aws_iam_role.lambda_exec.name
+  policy_arn = "aws_secretsmanager_secret_policy.secrets_policy.arn"
+}
+
+
 
 
 
