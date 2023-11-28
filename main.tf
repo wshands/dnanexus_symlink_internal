@@ -59,7 +59,7 @@ resource "aws_lambda_function" "dx_symlink_internal_lambda" {
   function_name = "DxSymlinkInternal"
   image_uri     = "230407893272.dkr.ecr.us-east-1.amazonaws.com/dnanexus_symlink_internal:main"
   package_type  = "Image"
-
+  timeout = 300
   role = aws_iam_role.lambda_exec.arn
 }
 
