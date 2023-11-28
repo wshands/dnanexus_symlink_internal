@@ -102,6 +102,30 @@ data "aws_secretsmanager_secret" "migration_dependencies_contributor_token" {
   name = "migration_dependencies_contributor_token"
 }
 
+# Give the Lambda function the ability to access secrets using
+# and identity policy
+# https://stackoverflow.com/questions/70574190/allow-lambda-permission-to-access-secretsmanager-value
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy
+resource "aws_iam_role_policy" "sm_policy" {
+  name = "sm_access_permissions"
+  role = aws_iam_role.lambda_exec.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "secretsmanager:GetSecretValue",
+        ]
+        Effect   = "Allow"
+        Resource = "*"
+      },
+    ]
+  })
+}
+
+
+/*
 resource "aws_secretsmanager_secret_policy" "secrets_policy" {
   secret_arn = data.aws_secretsmanager_secret.migration_dependencies_contributor_token.arn
 
@@ -121,16 +145,7 @@ resource "aws_secretsmanager_secret_policy" "secrets_policy" {
     ]
   })
 }
-
-
-#resource "aws_iam_role_policy_attachment" "lambda_secrets_policy" {
-#  role       = aws_iam_role.lambda_exec.name
-#  policy_arn = aws_secretsmanager_secret_policy.secrets_policy.arn
-#}
-
-
-
-
+*/
 
 # Add Lambda trigger from S3 bucket
 # A file added to the proper bucket will trigger the Lambda
