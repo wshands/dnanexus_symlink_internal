@@ -27,7 +27,6 @@ def lambda_handler(event, context):
     out = "/symlinks"
 
     token = login_and_get_secret.get_secret()
-    #token = get_secret()
     
     print(f"event:{event}")
     bucket = event['Records'][0]['s3']['bucket']['name']
@@ -56,8 +55,7 @@ def lambda_handler(event, context):
     
     
     try:
-        login_and_get_secret.login(token)
-        #login(token)        
+        login_and_get_secret.login(token)       
         
         params = {
             "project": project,
