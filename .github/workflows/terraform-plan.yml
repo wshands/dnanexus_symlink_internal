@@ -14,15 +14,16 @@ jobs:
     if: github.repository != 'hashicorp-education/learn-terraform-github-actions'
     name: "Terraform Plan"
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./services/dx-symlink-internal
     permissions:
       contents: read
       pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-
-      - name: Change to correct folder
-        run: cd services/dx-symlink-internal
 
       - name: Build Dockerfile for symlink lambda container
         run: docker build --platform linux/amd64 -t dnanexus_symlink_internal:test -f Dockerfile .

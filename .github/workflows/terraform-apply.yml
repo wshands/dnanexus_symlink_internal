@@ -16,6 +16,10 @@ jobs:
     if: github.repository != 'hashicorp-education/learn-terraform-github-actions'
     name: "Terraform Apply"
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./services/dx-symlink-internal
     permissions:
       contents: read
     steps:
