@@ -2,7 +2,7 @@ import boto3
 #from botocore.exceptions import ClientError
 import dxpy
 import json
-import login_and_get_secret
+#import login_and_get_secret
 import os
 
 import sys
@@ -10,7 +10,9 @@ import sys
 # https://docs.aws.amazon.com/lambda/latest/dg/python-image.html
 search_path = sys.path
 print(search_path)
-'''
+
+os.listdir(path='.')
+
 def get_secret():
 
     secret_name = "migration_dependencies_contributor_token"
@@ -46,7 +48,7 @@ def login(token):
         print('Login failed!')
         print(e)
         exit(1)
-'''        
+        
 
 def lambda_handler(event, context):
     #project = "project-GVJq6gQ01Z5KjVbXZ4vq2YKg"
