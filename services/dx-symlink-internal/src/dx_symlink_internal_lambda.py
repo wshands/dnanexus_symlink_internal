@@ -1,9 +1,11 @@
-import json
-import os
-import dxpy
 import boto3
-from botocore.exceptions import ClientError
+#from botocore.exceptions import ClientError
+import dxpy
+import json
+import login_and_get_secret
+import os
 
+'''
 def get_secret():
 
     secret_name = "migration_dependencies_contributor_token"
@@ -39,7 +41,7 @@ def login(token):
         print('Login failed!')
         print(e)
         exit(1)
-        
+'''        
 
 def lambda_handler(event, context):
     #project = "project-GVJq6gQ01Z5KjVbXZ4vq2YKg"
@@ -54,7 +56,7 @@ def lambda_handler(event, context):
 
     out = "/symlinks"
 
-    token = get_secret()
+    token = login_and_get_secret.get_secret()
     
     bucket = event['Records'][0]['s3']['bucket']['name']
     region = event['Records'][0]['awsRegion']
@@ -82,7 +84,7 @@ def lambda_handler(event, context):
     
     
     try:
-        login(token)
+        login_and_get_secret.login(token)
         
         params = {
             "project": project,
