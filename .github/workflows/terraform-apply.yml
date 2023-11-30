@@ -22,9 +22,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Change to correct folder
+        run: cd services/dx-symlink-internal
 
       - name: Build Dockerfile for symlink lambda container
-        run: docker build --platform linux/amd64 -t dnanexus_symlink_internal:${{ github.ref_name }} -f services/dx-symlink-internal/Dockerfile services/dx-symlink-internal
+        run: docker build --platform linux/amd64 -t dnanexus_symlink_internal:${{ github.ref_name }} -f Dockerfile .
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4

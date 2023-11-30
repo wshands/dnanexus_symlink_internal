@@ -21,9 +21,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Build Dockerfile for symlink lambda container
-        run: docker build --platform linux/amd64 -t dnanexus_symlink_internal:test -f services/dx-symlink-internal/Dockerfile services/dx-symlink-internal
+      - name: Change to correct folder
+        run: cd services/dx-symlink-internal
 
+      - name: Build Dockerfile for symlink lambda container
+        run: docker build --platform linux/amd64 -t dnanexus_symlink_internal:test -f Dockerfile .
+ 
       - name: Upload Configuration
         uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.0.0
         id: plan-upload
