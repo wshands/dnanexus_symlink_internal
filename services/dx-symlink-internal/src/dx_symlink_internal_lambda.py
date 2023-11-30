@@ -5,6 +5,11 @@ import json
 import login_and_get_secret
 import os
 
+import sys
+      
+# https://docs.aws.amazon.com/lambda/latest/dg/python-image.html
+search_path = sys.path
+print(search_path)
 '''
 def get_secret():
 
@@ -58,6 +63,7 @@ def lambda_handler(event, context):
 
     token = login_and_get_secret.get_secret()
     
+    print(f"event:{event}")
     bucket = event['Records'][0]['s3']['bucket']['name']
     region = event['Records'][0]['awsRegion']
     key = event['Records'][0]['s3']['object']['key']
