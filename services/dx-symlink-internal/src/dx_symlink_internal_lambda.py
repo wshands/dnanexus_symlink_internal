@@ -2,7 +2,7 @@ import boto3
 #from botocore.exceptions import ClientError
 import dxpy
 import json
-#import login_and_get_secret
+import login_and_get_secret
 import os
 
 import sys
@@ -63,8 +63,8 @@ def lambda_handler(event, context):
 
     out = "/symlinks"
 
-    #token = login_and_get_secret.get_secret()
-    token = get_secret()
+    token = login_and_get_secret.get_secret()
+    #token = get_secret()
     
     print(f"event:{event}")
     bucket = event['Records'][0]['s3']['bucket']['name']
@@ -93,8 +93,8 @@ def lambda_handler(event, context):
     
     
     try:
-        #login_and_get_secret.login(token)
-        login(token)        
+        login_and_get_secret.login(token)
+        #login(token)        
         
         params = {
             "project": project,
