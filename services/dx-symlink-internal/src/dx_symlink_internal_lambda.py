@@ -1,14 +1,14 @@
 import boto3
 import dxpy
 import json
-import login_and_get_secret
+import services.login_and_get_secret as login_and_get_secret
 import os
 
 import sys
       
 # https://docs.aws.amazon.com/lambda/latest/dg/python-image.html
 search_path = sys.path
-print(search_path)
+print(f"search path:{search_path}")
 
 os.listdir(path='.')
         
