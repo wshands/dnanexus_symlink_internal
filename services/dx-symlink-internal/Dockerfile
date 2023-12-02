@@ -1,7 +1,7 @@
 FROM public.ecr.aws/lambda/python:3.11
 # https://docs.aws.amazon.com/lambda/latest/dg/python-image.html#python-image-instructions
 # Example build: docker build --platform linux/amd64 -t waltslambda:test .
-# (However doesn't run on a Mac OS)
+# (However doesn't run on a Mac OS; issue not resolved)
 
 # Copy requirements.txt
 COPY dx-symlink-internal/requirements.txt ${LAMBDA_TASK_ROOT}
