@@ -4,7 +4,7 @@ FROM public.ecr.aws/lambda/python:3.11
 # (However doesn't run on a Mac OS)
 
 # Copy requirements.txt
-COPY requirements.txt ${LAMBDA_TASK_ROOT}
+COPY dx-symlink-internal/requirements.txt ${LAMBDA_TASK_ROOT}
 
 # Install the specified packages
 RUN pip install -r requirements.txt
