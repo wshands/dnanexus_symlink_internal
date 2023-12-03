@@ -18,7 +18,7 @@ phases:
   pre_build:
     commands:
       - echo Pre-build configuration...
-      - cd terraform && terraform init
+      - cd services/dx-symlink-internal && terraform init
   build:
     commands:
       - echo Building...
