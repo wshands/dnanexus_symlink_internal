@@ -1,0 +1,29 @@
+version: 0.2
+
+env:
+  variables:
+    BASE_PATH: deployment
+    ENVIRONMENT: dev
+    TERRAFORM_VERSION: 1.6.5
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.10
+    commands:
+      - echo Installing build tools...
+      - curl -o terraform_${TERRAFORM_VERSION}_linux_amd64.zip https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+      - unzip -o terraform_${TERRAFORM_VERSION}_linux_amd64.zip -d /usr/bin
+      - terraform --version
+  pre_build:
+    commands:
+      - echo Pre-build configuration...
+      - cd terraform && terraform init
+  build:
+    commands:
+      - echo Building...
+      - terraform plan -auto-aprove
+      #- terraform apply -auto-approve
+  post_build:
+    commands:
+      - echo Build completed on `date`
