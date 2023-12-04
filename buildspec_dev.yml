@@ -29,7 +29,7 @@ phases:
       - echo 'Logging in to Amazon ECR...'
       - mkdir -p ~/.docker/awsecr
       - mkdir -p ~/.docker/dockerhub
-      - aws ecr get-login-password | docker --config ~/.docker/awsecr login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
+      - aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker --config ~/.docker/awsecr login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
 
       - docker build --platform linux/amd64 -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -f ./services/dx-symlink-internal/Dockerfile .
       - docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG     
