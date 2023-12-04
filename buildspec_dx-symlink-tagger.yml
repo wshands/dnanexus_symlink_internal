@@ -31,7 +31,7 @@ phases:
       - mkdir -p ~/.docker/dockerhub
       - aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker --config ~/.docker/awsecr login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
 
-      - docker build --platform linux/amd64 -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -f ./services/dx-symlink-internal/Dockerfile .
+      - docker build --platform linux/amd64 -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -f ./services/$REPOSITORY/Dockerfile .
       - docker --config ~/.docker/awsecr push $REGISTRY/$REPOSITORY:$IMAGE_TAG > /dev/null
       
       - cd services/dx-symlink-internal && terraform init
