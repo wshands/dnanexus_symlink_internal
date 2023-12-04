@@ -1,7 +1,8 @@
 import boto3
 import dxpy
 import json
-import services.login_and_get_secret as login_and_get_secret
+#import services.login_and_get_secret as login_and_get_secret
+import login_and_get_secret
 import os
 
 import sys
