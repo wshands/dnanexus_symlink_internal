@@ -26,8 +26,6 @@ phases:
   pre_build:
     commands:
       - echo Pre-build configuration...
-      - cd services/dx-symlink-internal && terraform init
-
       - echo 'Logging in to Amazon ECR...'
       - mkdir -p ~/.docker/awsecr
       - mkdir -p ~/.docker/dockerhub
@@ -35,6 +33,8 @@ phases:
 
       - docker build --platform linux/amd64 -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -f ./services/dx-symlink-internal/Dockerfile .
       - docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG     
+
+      - cd services/dx-symlink-internal && terraform init
 
   build:
     commands:
