@@ -16,6 +16,7 @@ resource "aws_cloudwatch_log_group" "dx_symlink" {
 }
 
 resource "aws_iam_role" "lambda_exec" {
+  #name = "serverless_lambda_${var.lambda_function_name}"
   name = "serverless_lambda"
 
   assume_role_policy = jsonencode({
