@@ -32,12 +32,15 @@ phases:
       - mkdir -p ~/.docker/dockerhub
       - aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker --config ~/.docker/awsecr login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
 
+      - aws ecr create-repository --repository-name $REPOSITORY --region ${AWS_DEFAULT_REGION} || echo "Repo has probably been created."
       - docker build --platform linux/amd64 -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -f ./services/$TERRAFORM_DIR/Dockerfile .
       - docker --config ~/.docker/awsecr push $REGISTRY/$REPOSITORY:$IMAGE_TAG > /dev/null
 
+      - aws ecr create-repository --repository-name dnanexus_symlink_tagger --region ${AWS_DEFAULT_REGION} || echo "Repo has probably been created."
       - docker build --platform linux/amd64 -t $REGISTRY/dnanexus_symlink_tagger:$IMAGE_TAG -f ./services/dx-symlink-tagger/Dockerfile .
       - docker --config ~/.docker/awsecr push $REGISTRY/dnanexus_symlink_tagger:$IMAGE_TAG > /dev/null
 
+      - aws ecr create-repository --repository-name dnanexus_symlink_deleter --region ${AWS_DEFAULT_REGION} || echo "Repo has probably been created."
       - docker build --platform linux/amd64 -t $REGISTRY/dnanexus_symlink_deleter:$IMAGE_TAG -f ./services/dx-symlink-deleter/Dockerfile .
       - docker --config ~/.docker/awsecr push $REGISTRY/dnanexus_symlink_deleter:$IMAGE_TAG > /dev/null
 
