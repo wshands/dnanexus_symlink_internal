@@ -1,0 +1,55 @@
+version: 0.2
+
+env:
+  shell: bash
+  variables:
+    BASE_PATH: deployment
+    ENVIRONMENT: dev
+    TERRAFORM_VERSION: 1.6.5
+    REGISTRY: 230407893272.dkr.ecr.us-east-1.amazonaws.com
+    REPOSITORY: dnanexus_symlink_internal
+    IMAGE_TAG: main
+    TERRAFORM_DIR: dx-symlink-internal
+  parameter-store:
+    AWS_ACCOUNT_ID: '/symlink/aws-account-id'
+    AWS_DEFAULT_REGION: '/symlink/aws-default-region'
+
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.11
+    commands:
+      - echo Installing build tools...
+      - curl -o terraform_${TERRAFORM_VERSION}_linux_amd64.zip https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+      - unzip -o terraform_${TERRAFORM_VERSION}_linux_amd64.zip -d /usr/bin
+      - terraform --version
+  pre_build:
+    commands:
+      - echo Pre-build configuration...
+      - echo 'Logging in to Amazon ECR...'
+      - mkdir -p ~/.docker/awsecr
+      - mkdir -p ~/.docker/dockerhub
+      - aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker --config ~/.docker/awsecr login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
+
+      - docker build --platform linux/amd64 -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -f ./services/$REPOSITORY/Dockerfile .
+      - docker --config ~/.docker/awsecr push $REGISTRY/$REPOSITORY:$IMAGE_TAG > /dev/null
+
+      - docker build --platform linux/amd64 -t $REGISTRY/dnanexus_symlink_tagger:$IMAGE_TAG -f ./services/dnanexus_symlink_tagger/Dockerfile .
+      - docker --config ~/.docker/awsecr push $REGISTRY/dnanexus_symlink_tagger:$IMAGE_TAG > /dev/null
+
+      - docker build --platform linux/amd64 -t $REGISTRY/dnanexus_symlink_deleter:$IMAGE_TAG -f ./services/dnanexus_symlink_deleter/Dockerfile .
+      - docker --config ~/.docker/awsecr push $REGISTRY/dnanexus_symlink_deleter:$IMAGE_TAG > /dev/null
+
+      - cd services/$TERRAFORM_DIR && terraform init
+
+  build:
+    commands:
+      - echo Building...
+      - terraform plan
+      #- terraform apply -auto-approve
+
+
+  post_build:
+    commands:
+      - echo Build completed on `date`
