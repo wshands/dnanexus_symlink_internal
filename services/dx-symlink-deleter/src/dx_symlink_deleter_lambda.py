@@ -15,6 +15,7 @@ def lambda_handler(event, context):
     key = event['Records'][0]['s3']['object']['key']
     name = os.path.basename(key)
     path = os.path.dirname(key)
+    print(f"name:{name} path:{path}")
 
     try:
         login_and_get_secret.login(token)

@@ -1,5 +1,4 @@
 
-
 resource "aws_lambda_function" "dx_symlink_lambda" {
   function_name = var.lambda_function_name
   image_uri = var.lambda_image_uri
@@ -74,38 +73,3 @@ resource "aws_iam_role_policy" "sm_policy" {
     ]
   })
 }
-
-/*
-# Add Lambda trigger from S3 bucket
-# A file added to the proper bucket will trigger the Lambda
-# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_notification
-# https://stackoverflow.com/questions/68245765/add-trigger-to-aws-lambda-functions-via-terraform
-
-# use 'data' to referece an already existing bucket
-# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/s3_bucket
-data "aws_s3_bucket" "transfer-bucket" {
-  bucket = "transferred-files"
-}
-
-resource "aws_lambda_permission" "allow_bucket" {
-  statement_id  = "AllowExecutionFromS3Bucket"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.dx_symlink_lambda.arn
-  principal     = "s3.amazonaws.com"
-  source_arn    = data.aws_s3_bucket.transfer-bucket.arn
-}
-
-resource "aws_s3_bucket_notification" "bucket_notification" {
-  bucket = data.aws_s3_bucket.transfer-bucket.id
-  
-  lambda_function {
-    lambda_function_arn = aws_lambda_function.dx_symlink_lambda.arn
-    id = aws_lambda_function.dx_symlink_lambda.function_name
-    events              = [var.s3_trigger_event]
-    filter_prefix       = "data/"
-    #filter_suffix       = ".log"
-  }
-
-  depends_on = [aws_lambda_permission.allow_bucket]
-}
-*/

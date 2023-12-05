@@ -17,6 +17,8 @@ def lambda_handler(event, context):
     key = event['Records'][0]['s3']['object']['key']
     name = os.path.basename(key)
     path = os.path.dirname(key)
+    print(f"name:{name} path:{path}")
+    
     eTag = event['Records'][0]['s3']['object']['eTag']
     client = boto3.client('s3')
     response_s3 = client.get_object_tagging(Bucket=bucket, Key=key)

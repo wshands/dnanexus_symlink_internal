@@ -11,21 +11,18 @@ module "symlink_lambda_internal" {
   source = "./modules/dx-symlink-lambda"
   lambda_function_name = "DxSymlinkInternal"
   lambda_image_uri = "230407893272.dkr.ecr.us-east-1.amazonaws.com/dnanexus_symlink_internal:main"
-  #s3_trigger_event = "s3:ObjectCreated:*"
 }
 
 module "symlink_lambda_deleter" {   
   source = "./modules/dx-symlink-lambda"
   lambda_function_name = "DxSymlinkDeleter"
   lambda_image_uri = "230407893272.dkr.ecr.us-east-1.amazonaws.com/dnanexus_symlink_deleter:main"
-  #s3_trigger_event = "s3:ObjectRemoved:*"
 }
 
 module "symlink_lambda_tagger" {   
   source = "./modules/dx-symlink-lambda"
   lambda_function_name = "DxSymlinkTagger"
   lambda_image_uri = "230407893272.dkr.ecr.us-east-1.amazonaws.com/dnanexus_symlink_tagger:main"
-  #s3_trigger_event = "s3:ObjectTagging:*"
 }
 
 # Add Lambda trigger from S3 bucket
