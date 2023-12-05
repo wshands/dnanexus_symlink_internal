@@ -47,7 +47,7 @@ phases:
       - docker build --platform linux/amd64 -t $REGISTRY/dnanexus_symlink_deleter:$IMAGE_TAG -f ./services/dx-symlink-deleter/Dockerfile .
       - docker --config ~/.docker/awsecr push $REGISTRY/dnanexus_symlink_deleter:$IMAGE_TAG > /dev/null
 
-      - terraform init
+      - cd services && terraform init
 
   build:
     commands:
