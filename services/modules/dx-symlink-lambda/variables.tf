@@ -1,12 +1,6 @@
 
 # Input variable definitions
 
-variable "aws_region" {
-  description = "AWS region for all resources."
-  type    = string
-  default = "us-east-1"
-}
-
 variable "lambda_function_name" {
   description = "The name of the AWS lambda function in AWS that will be shown in the console"
   type = string
@@ -17,7 +11,9 @@ variable "lambda_image_uri" {
   type = string
 }
 
+/*
 variable "s3_trigger_event" {
   description = "The S3 event that will trigger the Lambda function"
   type = string
 }
+*/

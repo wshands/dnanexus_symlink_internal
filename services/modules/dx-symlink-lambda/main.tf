@@ -75,6 +75,7 @@ resource "aws_iam_role_policy" "sm_policy" {
   })
 }
 
+/*
 # Add Lambda trigger from S3 bucket
 # A file added to the proper bucket will trigger the Lambda
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_notification
@@ -107,3 +108,4 @@ resource "aws_s3_bucket_notification" "bucket_notification" {
 
   depends_on = [aws_lambda_permission.allow_bucket]
 }
+*/
