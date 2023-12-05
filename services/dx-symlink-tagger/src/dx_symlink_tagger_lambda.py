@@ -1,7 +1,6 @@
 import os
 import dxpy
 import boto3
-#import services.login_and_get_secret as login_and_get_secret
 import login_and_get_secret
 
 def lambda_handler(event, context):

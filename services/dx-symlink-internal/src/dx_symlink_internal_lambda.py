@@ -1,7 +1,6 @@
 import boto3
 import dxpy
 import json
-#import services.login_and_get_secret as login_and_get_secret
 import login_and_get_secret
 import os
 
@@ -15,12 +14,8 @@ os.listdir(path='.')
         
 
 def lambda_handler(event, context):
-    #project = "project-GVJq6gQ01Z5KjVbXZ4vq2YKg"
-    #drive = "drive-yXxkz987GqPVzQPVvQjpbBKJ"
-    #out = "/symlink"
-
     #project = "project-FPkJ6xj00Y3X88FKJ5Y12bgG" # Research Early Development - Dev
-    #drive = "drive-jVv8ZQ7K9pYBJKYyzgbkqJGB"
+    #drive = "drive-jVv8ZQ7K9pYBJKYyzgbkqJGB" # Research Early Development - Dev drive
     project = "project-GYgjXK80Yzg361fY4K7ffqb5" # migration dependencies
     drive = "drive-ypGJzKVXvZYkB7Pq98kQxbjg" # drive in migration dependencies
                                          # with Walts private AWS account credentials

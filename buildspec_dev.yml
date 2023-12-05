@@ -3,8 +3,6 @@ version: 0.2
 env:
   shell: bash
   variables:
-    BASE_PATH: deployment
-    ENVIRONMENT: dev
     TERRAFORM_VERSION: 1.6.5
     REGISTRY: 230407893272.dkr.ecr.us-east-1.amazonaws.com
     REPOSITORY: dnanexus_symlink_internal
@@ -27,8 +25,6 @@ phases:
   pre_build:
     commands:
       - echo Pre-build configuration...
-
-      - env
 
       - echo 'Logging in to Amazon ECR...'
       - mkdir -p ~/.docker/awsecr

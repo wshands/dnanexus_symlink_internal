@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - services/dx-symlink-internal/**
+      - services/**
 
 env:
   TF_CLOUD_ORGANIZATION: "walts_terraform_organization"
