@@ -1,4 +1,4 @@
-FROM public.ecr.aws/lambda/python:3.11
+FROM public.ecr.aws/lambda/python:3.12
 # https://docs.aws.amazon.com/lambda/latest/dg/python-image.html#python-image-instructions
 # Example build: docker build --platform linux/amd64 -t waltslambda:test .
 # (However doesn't run on a Mac OS)
@@ -7,7 +7,7 @@ FROM public.ecr.aws/lambda/python:3.11
 COPY services/requirements.txt ${LAMBDA_TASK_ROOT}
 
 # Install the specified packages
-RUN pip install -r requirements.txt
+RUN pip3 install -r requirements.txt
 
 # Copy function code
 COPY services/dx-symlink-internal/src/dx_symlink_internal_lambda.py ${LAMBDA_TASK_ROOT}
