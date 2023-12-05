@@ -1,9 +1,7 @@
 
 
 resource "aws_lambda_function" "dx_symlink_lambda" {
-  #function_name = "DxSymlinkInternal"
   function_name = var.lambda_function_name
-  #image_uri     = "230407893272.dkr.ecr.us-east-1.amazonaws.com/dnanexus_symlink_internal:main"
   image_uri = var.lambda_image_uri
   package_type  = "Image"
   timeout = 300
@@ -16,8 +14,7 @@ resource "aws_cloudwatch_log_group" "dx_symlink" {
 }
 
 resource "aws_iam_role" "lambda_exec" {
-  #name = "serverless_lambda_${var.lambda_function_name}"
-  name = "serverless_lambda"
+  name = "serverless_lambda_${var.lambda_function_name}"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -99,10 +96,11 @@ resource "aws_lambda_permission" "allow_bucket" {
 
 resource "aws_s3_bucket_notification" "bucket_notification" {
   bucket = data.aws_s3_bucket.transfer-bucket.id
-
+  
   lambda_function {
     lambda_function_arn = aws_lambda_function.dx_symlink_lambda.arn
-    events              = ["s3:ObjectCreated:*"]
+    id = aws_lambda_function.dx_symlink_lambda.function_name
+    events              = [var.s3_trigger_event]
     filter_prefix       = "data/"
     #filter_suffix       = ".log"
   }

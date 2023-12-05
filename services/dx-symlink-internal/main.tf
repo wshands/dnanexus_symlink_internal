@@ -11,4 +11,5 @@ module "symlink_lambda" {
   source = "../modules/dx-symlink-lambda"
   lambda_function_name = "DxSymlinkInternal"
   lambda_image_uri = "230407893272.dkr.ecr.us-east-1.amazonaws.com/dnanexus_symlink_internal:main"
+  s3_trigger_event = "s3:ObjectCreated:*"
 }
