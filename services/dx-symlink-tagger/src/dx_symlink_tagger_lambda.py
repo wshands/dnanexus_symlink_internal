@@ -18,11 +18,13 @@ def lambda_handler(event, context):
     name = os.path.basename(key)
     path = os.path.dirname(key)
     print(f"name:{name} path:{path}")
-    
+
     eTag = event['Records'][0]['s3']['object']['eTag']
     client = boto3.client('s3')
     response_s3 = client.get_object_tagging(Bucket=bucket, Key=key)
     properties_s3 = response_s3['TagSet']
+    print(f"tag set:{properties_s3}")
+
     length_s3 = len(properties_s3)
     property_md5sum = ""
     for index in range(0, length_s3):
@@ -50,8 +52,9 @@ def lambda_handler(event, context):
                 md5_dnanexus = ""
             if md5_dnanexus == md5:
                 print("S3 file md5 matches DNAnexus file")
-                dxpy.api.file_set_properties(object_id=file['id'], input_params={"project": project, "properties": {properties_s3[index]['Key']:properties_s3[index]['Value']}}, always_retry=True)
-                print("AWS tag written/changed to DNAnexus property: " + properties_s3[index]['Key'] + ":" + properties_s3[index]['Value'])
+                for index in range(0, length_s3):
+                    dxpy.api.file_set_properties(object_id=file['id'], input_params={"project": project, "properties": {properties_s3[index]['Key']:properties_s3[index]['Value']}}, always_retry=True)
+                    print("AWS tag written/changed to DNAnexus property: " + properties_s3[index]['Key'] + ":" + properties_s3[index]['Value'])
             else:
                 print("S3 file md5 does not match DNAnexus file")
 
