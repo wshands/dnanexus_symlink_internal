@@ -32,6 +32,10 @@ module "symlink_lambda_tagger" {
 # A file added to the proper bucket will trigger the Lambda
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_notification
 # https://stackoverflow.com/questions/68245765/add-trigger-to-aws-lambda-functions-via-terraform
+# There can be only one aws_s3_bucket_notification resource per bucket, so
+# it seems we cannot put aws_s3_bucket_notification in generic module code,
+# so define it here where we can add all the triggers at one time.
+# https://github.com/gruntwork-io/terragrunt/issues/1077
 
 # use 'data' to referece an already existing bucket
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/s3_bucket

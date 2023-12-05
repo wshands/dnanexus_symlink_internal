@@ -27,6 +27,9 @@ phases:
   pre_build:
     commands:
       - echo Pre-build configuration...
+
+      - env
+
       - echo 'Logging in to Amazon ECR...'
       - mkdir -p ~/.docker/awsecr
       - mkdir -p ~/.docker/dockerhub
@@ -44,7 +47,7 @@ phases:
       - docker build --platform linux/amd64 -t $REGISTRY/dnanexus_symlink_deleter:$IMAGE_TAG -f ./services/dx-symlink-deleter/Dockerfile .
       - docker --config ~/.docker/awsecr push $REGISTRY/dnanexus_symlink_deleter:$IMAGE_TAG > /dev/null
 
-      - cd services/$TERRAFORM_DIR && terraform init
+      - terraform init
 
   build:
     commands:

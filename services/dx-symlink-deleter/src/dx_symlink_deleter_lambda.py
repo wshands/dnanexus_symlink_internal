@@ -1,16 +1,16 @@
 import json
 import os
 import dxpy
-#import services.login_and_get_secret as login_and_get_secret
 import login_and_get_secret
 
 def lambda_handler(event, context):
     #project = "project-FPkJ6xj00Y3X88FKJ5Y12bgG" # Research Early Development - Dev
     #drive = "drive-jVv8ZQ7K9pYBJKYyzgbkqJGB"
     project = "project-GYgjXK80Yzg361fY4K7ffqb5" # migration dependencies
-    out = "/symlink"
+    out = "/symlinks"
     token = login_and_get_secret.get_secret()
     
+    print(f"event:{event}")
     bucket = event['Records'][0]['s3']['bucket']['name']
     key = event['Records'][0]['s3']['object']['key']
     name = os.path.basename(key)

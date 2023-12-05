@@ -9,9 +9,10 @@ def lambda_handler(event, context):
     #drive = "drive-jVv8ZQ7K9pYBJKYyzgbkqJGB"
     project = "project-GYgjXK80Yzg361fY4K7ffqb5" # migration dependencies
 
-    out = "/symlink"
+    out = "/symlinks"
     token = login_and_get_secret.get_secret()
     
+    print(f"event:{event}")
     bucket = event['Records'][0]['s3']['bucket']['name']
     key = event['Records'][0]['s3']['object']['key']
     name = os.path.basename(key)
