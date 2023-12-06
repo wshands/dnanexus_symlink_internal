@@ -4,19 +4,22 @@ env:
   shell: bash
   variables:
     TERRAFORM_VERSION: 1.6.5
-    REGISTRY: 230407893272.dkr.ecr.us-east-1.amazonaws.com
-    REPOSITORY: dnanexus_symlink_internal
+    INTERNAL_REPOSITORY: dnanexus_symlink_internal
+    DELETER_REPOSITORY: dnanexus_symlink_deleter
+    TAGGER_REPOSITORY: dnanexus_symlink_tagger
     IMAGE_TAG: main
-    TERRAFORM_DIR: dx-symlink-internal
+    INTERNAL_SERVICES_DIR: dx-symlink-internal
+    DELETER_SERVICES_DIR: dx-symlink-deleter
+    TAGGER_SERVICES_DIR: dx-symlink-tagger
+
   parameter-store:
     AWS_ACCOUNT_ID: '/symlink/aws-account-id'
     AWS_DEFAULT_REGION: '/symlink/aws-default-region'
 
-
 phases:
   install:
     runtime-versions:
-      python: 3.11
+      python: 3.12
     commands:
       - echo Installing build tools...
       - curl -o terraform_${TERRAFORM_VERSION}_linux_amd64.zip https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
@@ -31,17 +34,17 @@ phases:
       - mkdir -p ~/.docker/dockerhub
       - aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker --config ~/.docker/awsecr login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
 
-      - aws ecr create-repository --repository-name $REPOSITORY --region ${AWS_DEFAULT_REGION} || echo "Repo has probably been created."
-      - docker build --platform linux/amd64 -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -f ./services/$TERRAFORM_DIR/Dockerfile .
-      - docker --config ~/.docker/awsecr push $REGISTRY/$REPOSITORY:$IMAGE_TAG > /dev/null
+      - aws ecr create-repository --repository-name $INTERNAL_REPOSITORY --region ${AWS_DEFAULT_REGION} || echo "Repo has probably been created."
+      - docker build --platform linux/amd64 -t ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/$INTERNAL_REPOSITORY:$IMAGE_TAG -f ./services/$INTERNAL_SERVICES_DIR/Dockerfile .
+      - docker --config ~/.docker/awsecr push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/$INTERNAL_REPOSITORY:$IMAGE_TAG > /dev/null
 
-      - aws ecr create-repository --repository-name dnanexus_symlink_tagger --region ${AWS_DEFAULT_REGION} || echo "Repo has probably been created."
-      - docker build --platform linux/amd64 -t $REGISTRY/dnanexus_symlink_tagger:$IMAGE_TAG -f ./services/dx-symlink-tagger/Dockerfile .
-      - docker --config ~/.docker/awsecr push $REGISTRY/dnanexus_symlink_tagger:$IMAGE_TAG > /dev/null
+      - aws ecr create-repository --repository-name $TAGGER_REPOSITORY --region ${AWS_DEFAULT_REGION} || echo "Repo has probably been created."
+      - docker build --platform linux/amd64 -t ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/$TAGGER_REPOSITORY:$IMAGE_TAG -f ./services/$TAGGER_SERVICES_DIR/Dockerfile .
+      - docker --config ~/.docker/awsecr push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/$TAGGER_REPOSITORY:$IMAGE_TAG > /dev/null
 
-      - aws ecr create-repository --repository-name dnanexus_symlink_deleter --region ${AWS_DEFAULT_REGION} || echo "Repo has probably been created."
-      - docker build --platform linux/amd64 -t $REGISTRY/dnanexus_symlink_deleter:$IMAGE_TAG -f ./services/dx-symlink-deleter/Dockerfile .
-      - docker --config ~/.docker/awsecr push $REGISTRY/dnanexus_symlink_deleter:$IMAGE_TAG > /dev/null
+      - aws ecr create-repository --repository-name $DELETER_REPOSITORY --region ${AWS_DEFAULT_REGION} || echo "Repo has probably been created."
+      - docker build --platform linux/amd64 -t ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/$DELETER_REPOSITORY:$IMAGE_TAG -f ./services/$DELETER_SERVICES_DIR/Dockerfile .
+      - docker --config ~/.docker/awsecr push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/$DELETER_REPOSITORY:$IMAGE_TAG > /dev/null
 
       - cd services && terraform init
 
@@ -50,8 +53,3 @@ phases:
       - echo Building...
       - terraform plan
       #- terraform apply -auto-approve
-
-
-  post_build:
-    commands:
-      - echo Build completed on `date`
