@@ -5,6 +5,16 @@ resource "aws_lambda_function" "dx_symlink_lambda" {
   package_type  = "Image"
   timeout = 300
   role = aws_iam_role.lambda_exec.arn
+
+  environment {
+    variables = {
+      DNANEXUS_PROJECT = var.dnanexus_project
+      DNANEXUS_DRIVE = var.dnanexus_drive
+      DNANEXUS_SYMLINKS_FOLDER = var.dnanexus_symlinks_folder
+      DNANEXUS_TOKEN_SECRET_NAME = var.dnanexus_token_secret_name
+      DNANEXUS_TOKEN_SECRET_KEY = var.dnanexus_token_secret_key
+    }
+  }  
 }
 
 resource "aws_cloudwatch_log_group" "dx_symlink" {

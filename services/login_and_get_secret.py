@@ -2,11 +2,13 @@ import boto3
 from botocore.exceptions import ClientError
 import dxpy
 import json
+import os
 
 def get_secret():
-
-    secret_name = "migration_dependencies_contributor_token"
-    region_name = "us-east-1"
+    secret_name = os.environ['DNANEXUS_TOKEN_SECRET_NAME']
+    secret_key = os.environ['DNANEXUS_TOKEN_SECRET_KEY']
+    # https://docs.aws.amazon.com/lambda/latest/dg/configuration-envvars.html#configuration-envvars-runtime   
+    region_name = os.environ['AWS_REGION']
 
     # Create a Secrets Manager client
     session = boto3.session.Session()
@@ -25,7 +27,7 @@ def get_secret():
         raise e
 
     # Decrypts secret using the associated KMS key.
-    secret = json.loads(get_secret_value_response['SecretString'])['DNANexus_migration_dependencies_Contribute_token']
+    secret = json.loads(get_secret_value_response['SecretString'])[secret_key]
     return secret
 
 def login(token):

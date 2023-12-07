@@ -4,10 +4,9 @@ import dxpy
 import login_and_get_secret
 
 def lambda_handler(event, context):
-    #project = "project-FPkJ6xj00Y3X88FKJ5Y12bgG" # Research Early Development - Dev
-    #drive = "drive-jVv8ZQ7K9pYBJKYyzgbkqJGB"
-    project = "project-GYgjXK80Yzg361fY4K7ffqb5" # migration dependencies
-    out = "/symlinks"
+    project = os.environ['DNANEXUS_PROJECT']
+    out = os.environ['DNANEXUS_SYMLINKS_FOLDER']
+
     token = login_and_get_secret.get_secret()
     
     print(f"event:{event}")
