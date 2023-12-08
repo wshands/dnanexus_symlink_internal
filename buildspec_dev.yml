@@ -67,12 +67,12 @@ phases:
       - |
           terraform plan \
             -var='dnanexus_drive_id=$DNANEXUS_DRIVE_ID' \
-            -var='dnanexus_project_id' \
-            -var='dnanexus_symlinks_folder' \
-            -var='dnanexus_token_secret_name' \
-            -var='dnanexus_token_secret_key' \
-            -var='target_bucket_name' \
-            -var='target_bucket_filter_prefix' \
+            -var='dnanexus_project_id=$DNANEXUS_PROJECT_ID' \
+            -var='dnanexus_symlinks_folder=$DNANEXUS_SYMLINKS_FOLDER' \
+            -var='dnanexus_token_secret_name=$DNANEXUS_TOKEN_SECRET_NAME' \
+            -var='dnanexus_token_secret_key=$DNANEXUS_TOKEN_SECRET_KEY' \
+            -var='target_bucket_name=$AWS_TARGET_BUCKET_NAME' \
+            -var='target_bucket_filter_prefix=$AWS_TARGET_BUCKET_FILTER_PREFIX' \
             -var='symlink_lambda_internal_image_uri=$LAMBDA_INTERNAL_IMAGE_URI' \
             -var='symlink_lambda_deleter_image_uri=$LAMBDA_DELETER_IMAGE_URI' \
             -var='symlink_lambda_tagger_image_uri=$LAMBDA_TAGGER_IMAGE_URI' 
