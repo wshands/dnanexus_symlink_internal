@@ -10,9 +10,9 @@ provider "aws" {
 module "symlink_lambda_internal" {
   source = "./modules/dx-symlink-lambda"
   lambda_function_name = "DxSymlinkInternal"
-  lambda_image_uri = "230407893272.dkr.ecr.us-east-1.amazonaws.com/dnanexus_symlink_internal:main"
-  dnanexus_drive = var.dnanexus_drive
-  dnanexus_project = var.dnanexus_project
+  lambda_image_uri = var.symlink_lambda_internal_image_uri
+  dnanexus_drive = var.dnanexus_drive_id
+  dnanexus_project = var.dnanexus_project_id
   dnanexus_symlinks_folder = var.dnanexus_symlinks_folder
   dnanexus_token_secret_name = var.dnanexus_token_secret_name
   dnanexus_token_secret_key = var.dnanexus_token_secret_key
@@ -21,9 +21,9 @@ module "symlink_lambda_internal" {
 module "symlink_lambda_deleter" {
   source = "./modules/dx-symlink-lambda"
   lambda_function_name = "DxSymlinkDeleter"
-  lambda_image_uri = "230407893272.dkr.ecr.us-east-1.amazonaws.com/dnanexus_symlink_deleter:main"
-  dnanexus_drive = var.dnanexus_drive
-  dnanexus_project = var.dnanexus_project
+  lambda_image_uri = var.symlink_lambda_deleter_image_uri
+  dnanexus_drive = var.dnanexus_drive_id
+  dnanexus_project = var.dnanexus_project_id
   dnanexus_symlinks_folder = var.dnanexus_symlinks_folder
   dnanexus_token_secret_name = var.dnanexus_token_secret_name
   dnanexus_token_secret_key = var.dnanexus_token_secret_key
@@ -32,9 +32,9 @@ module "symlink_lambda_deleter" {
 module "symlink_lambda_tagger" {
   source = "./modules/dx-symlink-lambda"
   lambda_function_name = "DxSymlinkTagger"
-  lambda_image_uri = "230407893272.dkr.ecr.us-east-1.amazonaws.com/dnanexus_symlink_tagger:main"
-  dnanexus_drive = var.dnanexus_drive
-  dnanexus_project = var.dnanexus_project
+  lambda_image_uri = var.symlink_lambda_tagger_image_uri
+  dnanexus_drive = var.dnanexus_drive_id
+  dnanexus_project = var.dnanexus_project_id
   dnanexus_symlinks_folder = var.dnanexus_symlinks_folder
   dnanexus_token_secret_name = var.dnanexus_token_secret_name
   dnanexus_token_secret_key = var.dnanexus_token_secret_key

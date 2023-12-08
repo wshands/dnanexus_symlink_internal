@@ -7,12 +7,27 @@ variable "aws_region" {
   default = "us-east-1"
 }
 
-variable "dnanexus_drive" {
+variable "symlink_lambda_internal_image_uri" {
+  description = "URI of the Docker image that is used to deploy the internal lambda function"
+  type = string
+}
+
+variable "symlink_lambda_deleter_image_uri" {
+  description = "URI of the Docker image that is used to deploy the deleter lambda function"
+  type = string
+}
+
+variable "symlink_lambda_tagger_image_uri" {
+  description = "URI of the Docker image that is used to deploy the tagger lambda function"
+  type = string
+}
+
+variable "dnanexus_drive_id" {
   description = "DNAnexus ID of symlink drive"
   type = string
 }
 
-variable "dnanexus_project" {
+variable "dnanexus_project_id" {
   description = "DNAnexus project ID"
   type = string
 }
