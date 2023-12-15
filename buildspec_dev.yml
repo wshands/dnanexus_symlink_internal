@@ -4,9 +4,9 @@ env:
   shell: bash
   variables:
     TERRAFORM_VERSION: 1.6.5
-    INTERNAL_REPOSITORY: dnanexus_symlink_internal
-    DELETER_REPOSITORY: dnanexus_symlink_deleter
-    TAGGER_REPOSITORY: dnanexus_symlink_tagger
+    INTERNAL_REPOSITORY: dx-migrations-symlink-internal
+    DELETER_REPOSITORY: dx-migrations-symlink-deleter
+    TAGGER_REPOSITORY: dx-migrations-symlink-tagger
     IMAGE_TAG: main
     INTERNAL_SERVICES_DIR: dx-symlink-internal
     DELETER_SERVICES_DIR: dx-symlink-deleter
