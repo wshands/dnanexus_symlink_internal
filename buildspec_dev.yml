@@ -49,7 +49,7 @@ phases:
 
       - aws ecr create-repository --repository-name $INTERNAL_REPOSITORY --region ${AWS_DEFAULT_REGION} || echo "Repo has probably been created."
       - docker build --platform linux/amd64 -t ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/$INTERNAL_REPOSITORY:$IMAGE_TAG -f ./services/$INTERNAL_SERVICES_DIR/Dockerfile .
-      - docker --config ~/.docker/awsecr push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/$INTERNAL_REPOSITORY:$IMAGE_TAG > /dev/null
+      - docker --config ~/.docker/awsecr push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/$INTERNAL_REPOSITORY:$IMAGE_TAG
 
       - aws ecr create-repository --repository-name $TAGGER_REPOSITORY --region ${AWS_DEFAULT_REGION} || echo "Repo has probably been created."
       - docker build --platform linux/amd64 -t ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/$TAGGER_REPOSITORY:$IMAGE_TAG -f ./services/$TAGGER_SERVICES_DIR/Dockerfile .
