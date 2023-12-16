@@ -48,7 +48,7 @@ resource "aws_iam_role_policy_attachment" "lambda_policy" {
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/secretsmanager_secret
 # https://developer.hashicorp.com/terraform/language/data-sources
 data "aws_secretsmanager_secret" "dnanexus_token_secret_name" {
-  name = var.dnanexus_token_secret_name
+  name = "${var.dnanexus_token_secret_name}"
 }
 
 # Give the Lambda function the ability to access secrets using
