@@ -59,7 +59,7 @@ phases:
       - docker build --platform linux/amd64 -t ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/$DELETER_REPOSITORY:$IMAGE_TAG -f ./services/$DELETER_SERVICES_DIR/Dockerfile .
       - docker --config ~/.docker/awsecr push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/$DELETER_REPOSITORY:$IMAGE_TAG > /dev/null
 
-      - cd services && terraform init
+      - cd terraform && terraform init
 
   build:
     commands:
